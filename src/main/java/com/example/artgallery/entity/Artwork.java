@@ -2,7 +2,7 @@ package com.example.artgallery.entity;
 
 
 import jakarta.persistence.*;
-import lombok.*;
+
 
 import java.math.BigDecimal;
 
