@@ -13,10 +13,8 @@ import org.slf4j.LoggerFactory;
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
-    
-    // UserDetailsService буде інжектований автоматично
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -24,8 +22,14 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
+                // 🔓 дозволити actuator health без авторизації
+                .requestMatchers("/actuator/health").permitAll()
+
+                // 🔒 захистити admin API
                 .requestMatchers("/api/admin/**").authenticated()
                 .requestMatchers("/api/admin-management/**").hasRole("ADMIN")
+
+                // інше — дозволити всім
                 .anyRequest().permitAll()
             )
             .httpBasic(basic -> {})
@@ -40,10 +44,8 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // UserDetailsService тепер реалізований в AdminAuthService
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-} 
+}
