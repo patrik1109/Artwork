@@ -1,13 +1,20 @@
 import React, { useState, useEffect } from 'react';
 
-const StripePayment = ({ photo, onSuccess, onCancel }) => {
+const StripePayment = ({ photo, userEmail, onSuccess, onCancel }) => {
   const [stripe, setStripe] = useState(null);
   const [elements, setElements] = useState(null);
   const [card, setCard] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(userEmail || ''); // Використовуємо переданий email
   const [publishableKey, setPublishableKey] = useState('');
+
+  useEffect(() => {
+    // Встановлюємо email, якщо він переданий
+    if (userEmail) {
+      setEmail(userEmail);
+    }
+  }, [userEmail]);
 
   useEffect(() => {
     // Отримати публічний ключ Stripe
@@ -71,10 +78,16 @@ const StripePayment = ({ photo, onSuccess, onCancel }) => {
           amount: photo.price,
           currency: 'usd',
           description: `Purchase: ${photo.title}`,
+          customerEmail: email,
+          photoId: photo.id,
         }),
       });
 
       if (!createIntentResponse.ok) {
+        const errorData = await createIntentResponse.json();
+        if (errorData.alreadyPurchased) {
+          throw new Error('You already have an active purchase for this photo. Please check your email for the download link.');
+        }
         throw new Error('Failed to create payment intent');
       }
 
@@ -205,9 +218,11 @@ const StripePayment = ({ photo, onSuccess, onCancel }) => {
                 marginTop: '0.5rem',
                 border: '1px solid #ddd',
                 borderRadius: '4px',
-                fontSize: '16px'
+                fontSize: '16px',
+                backgroundColor: userEmail ? '#f5f5f5' : 'white'
               }}
               placeholder="Enter your email"
+              readOnly={!!userEmail}
               required
             />
           </div>

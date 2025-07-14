@@ -6,6 +6,7 @@ function PhotoGallery() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [purchaseModal, setPurchaseModal] = useState({ show: false, photo: null });
+  const [userEmail, setUserEmail] = useState(''); // Додаємо стан для email користувача
 
   useEffect(() => {
     fetch('http://localhost:8080/api/photos')
@@ -25,7 +26,51 @@ function PhotoGallery() {
 
   const handleDownload = async (photo) => {
     if (photo.price && photo.price > 0) {
-      setPurchaseModal({ show: true, photo: photo });
+      // Запитати email користувача, якщо він ще не введений
+      if (!userEmail) {
+        const email = prompt('Please enter your email to purchase this photo:');
+        if (!email) return; // Користувач скасував
+        setUserEmail(email);
+      }
+      
+      // Перевірити, чи вже куплене фото
+      try {
+        const canDownloadResponse = await fetch(`http://localhost:8080/api/photo-purchases/can-download?email=${encodeURIComponent(userEmail)}&photoId=${photo.id}`);
+        const canDownload = await canDownloadResponse.json();
+        
+        if (canDownload) {
+          // Фото вже куплене — одразу скачати
+          const purchasesResponse = await fetch(`http://localhost:8080/api/photo-purchases/user/${encodeURIComponent(userEmail)}`);
+          const purchases = await purchasesResponse.json();
+          const existingPurchase = purchases.find(p => p.photoId === photo.id && p.status === 'COMPLETED' && p.downloadToken);
+
+          if (existingPurchase && existingPurchase.downloadToken) {
+            const downloadResponse = await fetch(`http://localhost:8080/api/photo-purchases/download-file?downloadToken=${existingPurchase.downloadToken}`);
+            if (downloadResponse.ok) {
+              const blob = await downloadResponse.blob();
+              const url = window.URL.createObjectURL(blob);
+              const link = document.createElement('a');
+              link.href = url;
+              link.download = photo.title || 'photo.jpg';
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+              window.URL.revokeObjectURL(url);
+              alert('Download completed!');
+            } else {
+              alert('Download failed. Please check your email for the download link.');
+            }
+          } else {
+            alert('Purchase found but download token is missing. Please check your email for the download link.');
+          }
+        } else {
+          setPurchaseModal({ show: true, photo: photo });
+        }
+      } catch (error) {
+        console.error('Error checking purchase status:', error);
+        // Якщо не вдалося перевірити, все одно відкрити модальне вікно
+        setPurchaseModal({ show: true, photo: photo });
+      }
     } else {
       await downloadPhoto(photo);
     }
@@ -93,6 +138,7 @@ function PhotoGallery() {
       {purchaseModal.show && (
         <StripePayment
           photo={purchaseModal.photo}
+          userEmail={userEmail}
           onSuccess={handlePurchaseSuccess}
           onCancel={closeModal}
         />
