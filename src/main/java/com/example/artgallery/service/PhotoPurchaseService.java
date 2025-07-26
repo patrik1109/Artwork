@@ -79,8 +79,8 @@ public class PhotoPurchaseService {
         
         purchase = photoPurchaseRepository.save(purchase);
         
-        // Send download link email
-        emailService.sendDownloadLink(purchase.getCustomerEmail(), purchase.getPhoto().getTitle(), purchase.getDownloadToken());
+        // Send purchase success email
+        emailService.sendPurchaseSuccess(purchase.getCustomerEmail(), purchase.getPhoto().getTitle(), purchase.getTransactionId());
         
         return convertToDTO(purchase);
     }
@@ -148,8 +148,8 @@ public class PhotoPurchaseService {
         
         purchase = photoPurchaseRepository.save(purchase);
         
-        // Send download link email
-        emailService.sendDownloadLink(purchase.getCustomerEmail(), purchase.getPhoto().getTitle(), purchase.getDownloadToken());
+        // Send purchase success email
+        emailService.sendPurchaseSuccess(purchase.getCustomerEmail(), purchase.getPhoto().getTitle(), purchase.getTransactionId());
         
         return convertToDTO(purchase);
     }

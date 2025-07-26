@@ -24,7 +24,7 @@ import org.springframework.http.MediaType;
 
 @RestController
 @RequestMapping("/api/photo-purchases")
-@CrossOrigin(origins = "http://localhost:3000", allowedHeaders = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS})
+@CrossOrigin(origins = {"http://localhost:3000", "https://artwork-production-fec7.up.railway.app"}, allowedHeaders = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS})
 public class PhotoPurchaseController {
     
     @Autowired
@@ -97,27 +97,29 @@ public class PhotoPurchaseController {
         if (purchase.getTokenExpiry().isBefore(LocalDateTime.now())) {
             return ResponseEntity.status(HttpStatus.GONE).build();
         }
+        
         String downloadUrl = purchase.getPhoto().getDownloadUrl();
         String fileName = Paths.get(downloadUrl).getFileName().toString();
-        Path filePath = Paths.get("D:/Workspace_Idea/artGallery/uploads/photos").resolve(fileName).normalize();
+        
+        // Використовуємо classpath ресурси замість хардкодованого шляху
+        String resourcePath = "static" + downloadUrl; // downloadUrl починається з /images/photos/
+        
         Resource resource;
         try {
-            resource = new UrlResource(filePath.toUri());
+            resource = new org.springframework.core.io.ClassPathResource(resourcePath);
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
+        
         if (!resource.exists()) {
             return ResponseEntity.notFound().build();
         }
-        String contentType;
-        try {
-            contentType = Files.probeContentType(filePath);
-        } catch (Exception e) {
-            contentType = "application/octet-stream";
-        }
+        
+        String contentType = "image/jpeg"; // припускаємо що всі файли jpeg
+        
         return ResponseEntity.ok()
-            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-            .contentType(MediaType.parseMediaType(contentType != null ? contentType : "application/octet-stream"))
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+            .contentType(MediaType.parseMediaType(contentType))
             .body(resource);
     }
 } 

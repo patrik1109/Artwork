@@ -93,34 +93,35 @@ public class EmailService {
         }
     }
     
-    // Method for sending download link
-    public void sendDownloadLink(String customerEmail, String photoTitle, String downloadToken) {
+    // Method for sending purchase success confirmation
+    public void sendPurchaseSuccess(String customerEmail, String photoTitle, String transactionId) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             String fromEmail = "patrikeevegor@gmail.com".trim();
             message.setFrom(fromEmail);
             message.setTo(customerEmail);
-            message.setSubject("Photo Download Link");
-            
-            String downloadUrl = "http://localhost:3000/download?token=" + downloadToken;
+            message.setSubject("Purchase Confirmed - Thank You!");
             
             String text = String.format("""
-                Your purchase has been confirmed!
+                Your purchase has been successfully completed!
                 
                 Photo: %s
-                Download link: %s
+                Transaction ID: %s
                 
-                This link is valid for 7 days.
+                Your photo should have downloaded automatically. 
+                If you have any issues, please contact our support.
+                
+                Thank you for your purchase!
                 
                 Best regards,
                 Art Gallery Team
-                """, photoTitle, downloadUrl);
+                """, photoTitle, transactionId);
             
             message.setText(text);
             emailSender.send(message);
-            System.out.println("Download link email sent to: " + customerEmail);
+            System.out.println("Purchase success email sent to: " + customerEmail);
         } catch (Exception e) {
-            System.err.println("Error sending download link email: " + e.getMessage());
+            System.err.println("Error sending purchase success email: " + e.getMessage());
         }
     }
 
