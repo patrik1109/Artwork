@@ -128,18 +128,13 @@ const StripePayment = ({ photo, userEmail, onSuccess, onCancel }) => {
         onSuccess(result.purchase);
         console.log('purchase:', result.purchase);
         if (result.purchase && result.purchase.status === 'COMPLETED' && result.purchase.downloadToken) {
-          console.log('💳 Payment successful! Starting automatic download...');
-          console.log('📦 Purchase data:', result.purchase);
-          
           // Download via backend
           fetch(`${config.API_BASE_URL}/api/photo-purchases/download-file?downloadToken=${result.purchase.downloadToken}`)
             .then(res => {
-              console.log('📥 Download request status:', res.status);
               if (!res.ok) throw new Error('Download failed: ' + res.status);
               return res.blob();
             })
             .then(blob => {
-              console.log('✅ Download successful! Starting file download...');
               const url = window.URL.createObjectURL(blob);
               const link = document.createElement('a');
               link.href = url;
@@ -150,7 +145,7 @@ const StripePayment = ({ photo, userEmail, onSuccess, onCancel }) => {
               window.URL.revokeObjectURL(url);
             })
             .catch(err => {
-              console.error('❌ Download error:', err);
+              console.error('Download error:', err);
             });
         } else {
           // Not completed yet

@@ -37,16 +37,7 @@ public class PhotoPurchaseService {
         
         Photo photo = photoOpt.get();
         
-        // Check if there's already an active purchase
-        Optional<PhotoPurchase> existingPurchase = photoPurchaseRepository.findActivePurchase(
-            request.getCustomerEmail(), 
-            request.getPhotoId(), 
-            LocalDateTime.now()
-        );
-        
-        if (existingPurchase.isPresent()) {
-            throw new RuntimeException("You already have an active purchase for this photo");
-        }
+        // Дозволяємо багаторазові покупки того самого фото
         
         // Create purchase
         PhotoPurchase purchase = new PhotoPurchase(
