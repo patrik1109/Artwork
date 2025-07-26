@@ -84,10 +84,6 @@ const StripePayment = ({ photo, userEmail, onSuccess, onCancel }) => {
       });
 
       if (!createIntentResponse.ok) {
-        const errorData = await createIntentResponse.json();
-        if (errorData.alreadyPurchased) {
-          throw new Error('You already have an active purchase for this photo. Please check your email for the download link.');
-        }
         throw new Error('Failed to create payment intent');
       }
 

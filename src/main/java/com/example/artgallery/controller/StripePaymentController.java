@@ -41,16 +41,7 @@ public class StripePaymentController {
             String customerEmail = (String) request.get("customerEmail");
             Long photoId = Long.parseLong(request.get("photoId").toString());
             
-            // Перевірити, чи вже є активна покупка
-            if (customerEmail != null && photoId != null) {
-                boolean canDownload = photoPurchaseService.canUserDownload(customerEmail, photoId);
-                if (canDownload) {
-                    Map<String, Object> error = new HashMap<>();
-                    error.put("error", "You already have an active purchase for this photo");
-                    error.put("alreadyPurchased", true);
-                    return ResponseEntity.badRequest().body(error);
-                }
-            }
+            // Дозволяємо багаторазові покупки того самого фото
             
             // Конвертувати в центи
             Long amountInCents = paymentService.convertToCents(BigDecimal.valueOf(amount));

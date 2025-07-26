@@ -34,44 +34,8 @@ function PhotoGallery() {
         setUserEmail(email);
       }
       
-      // Перевірити, чи вже куплене фото
-      try {
-        const canDownloadResponse = await fetch(`${config.API_BASE_URL}/api/photo-purchases/can-download?email=${encodeURIComponent(userEmail)}&photoId=${photo.id}`);
-        const canDownload = await canDownloadResponse.json();
-        
-        if (canDownload) {
-          // Фото вже куплене — одразу скачати
-          const purchasesResponse = await fetch(`${config.API_BASE_URL}/api/photo-purchases/user/${encodeURIComponent(userEmail)}`);
-          const purchases = await purchasesResponse.json();
-          const existingPurchase = purchases.find(p => p.photoId === photo.id && p.status === 'COMPLETED' && p.downloadToken);
-
-          if (existingPurchase && existingPurchase.downloadToken) {
-            const downloadResponse = await fetch(`${config.API_BASE_URL}/api/photo-purchases/download-file?downloadToken=${existingPurchase.downloadToken}`);
-            if (downloadResponse.ok) {
-              const blob = await downloadResponse.blob();
-              const url = window.URL.createObjectURL(blob);
-              const link = document.createElement('a');
-              link.href = url;
-              link.download = photo.title || 'photo.jpg';
-              document.body.appendChild(link);
-              link.click();
-              document.body.removeChild(link);
-              window.URL.revokeObjectURL(url);
-              alert('Download completed!');
-            } else {
-              alert('Download failed. Please check your email for the download link.');
-            }
-          } else {
-            alert('Purchase found but download token is missing. Please check your email for the download link.');
-          }
-        } else {
-          setPurchaseModal({ show: true, photo: photo });
-        }
-      } catch (error) {
-        console.error('Error checking purchase status:', error);
-        // Якщо не вдалося перевірити, все одно відкрити модальне вікно
-        setPurchaseModal({ show: true, photo: photo });
-      }
+      // Завжди дозволяємо нові покупки - одразу відкриваємо модальне вікно
+      setPurchaseModal({ show: true, photo: photo });
     } else {
       await downloadPhoto(photo);
     }
