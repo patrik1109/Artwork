@@ -12,7 +12,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/admin-management")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {"http://localhost:3000", "https://artwork-production-fec7.up.railway.app"})
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminManagementController {
 
