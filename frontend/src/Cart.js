@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
+import config from './config';
 
 function Cart({ cart, onRemove, onOrder }) {
   const [form, setForm] = useState({ name: '', email: '', phone: '' });
@@ -54,7 +55,7 @@ function Cart({ cart, onRemove, onOrder }) {
     }
     
     setStatus('Sending...');
-    fetch('http://localhost:8080/api/orders', {
+    fetch(`${config.API_BASE_URL}/api/orders`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

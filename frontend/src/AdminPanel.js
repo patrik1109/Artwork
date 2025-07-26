@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './AdminPanel.css';
+import config from './config';
 
 const AdminPanel = () => {
     const [activeTab, setActiveTab] = useState('dashboard');
@@ -28,7 +29,7 @@ const AdminPanel = () => {
 
     const loadDashboardData = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/admin/dashboard', {
+            const response = await fetch(`${config.API_BASE_URL}/api/admin/dashboard`, {
                 credentials: 'include'
             });
             if (handle401(response)) return;
@@ -41,7 +42,7 @@ const AdminPanel = () => {
 
     const loadPurchases = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/admin/purchases', {
+            const response = await fetch(`${config.API_BASE_URL}/api/admin/purchases`, {
                 credentials: 'include'
             });
             if (handle401(response)) return;
@@ -54,7 +55,7 @@ const AdminPanel = () => {
 
     const loadOrders = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/admin/orders', {
+            const response = await fetch(`${config.API_BASE_URL}/api/admin/orders`, {
                 credentials: 'include'
             });
             if (handle401(response)) return;
@@ -69,7 +70,7 @@ const AdminPanel = () => {
 
     const confirmPayment = async (purchaseId) => {
         try {
-            const response = await fetch(`http://localhost:8080/api/admin/purchases/${purchaseId}/confirm`, {
+            const response = await fetch(`${config.API_BASE_URL}/api/admin/purchases/${purchaseId}/confirm`, {
                 method: 'POST',
                 credentials: 'include'
             });
@@ -87,7 +88,7 @@ const AdminPanel = () => {
 
     const updateOrderStatus = async (orderId, status) => {
         try {
-            const response = await fetch(`http://localhost:8080/api/admin/orders/${orderId}/status?status=${status}`, {
+            const response = await fetch(`${config.API_BASE_URL}/api/admin/orders/${orderId}/status?status=${status}`, {
                 method: 'PUT',
                 credentials: 'include'
             });
@@ -104,7 +105,7 @@ const AdminPanel = () => {
 
     const handleLogout = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/admin/logout', {
+            const response = await fetch(`${config.API_BASE_URL}/api/admin/logout`, {
                 method: 'POST',
                 credentials: 'include'
             });

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import StripePayment from './StripePayment';
+import config from './config';
 
 function PhotoGallery() {
   const [photos, setPhotos] = useState([]);
@@ -9,7 +10,7 @@ function PhotoGallery() {
   const [userEmail, setUserEmail] = useState(''); // Додаємо стан для email користувача
 
   useEffect(() => {
-    fetch('http://localhost:8080/api/photos')
+    fetch(`${config.API_BASE_URL}/api/photos`)
       .then(res => {
         if (!res.ok) throw new Error('Failed to load photos');
         return res.json();
@@ -35,17 +36,17 @@ function PhotoGallery() {
       
       // Перевірити, чи вже куплене фото
       try {
-        const canDownloadResponse = await fetch(`http://localhost:8080/api/photo-purchases/can-download?email=${encodeURIComponent(userEmail)}&photoId=${photo.id}`);
+        const canDownloadResponse = await fetch(`${config.API_BASE_URL}/api/photo-purchases/can-download?email=${encodeURIComponent(userEmail)}&photoId=${photo.id}`);
         const canDownload = await canDownloadResponse.json();
         
         if (canDownload) {
           // Фото вже куплене — одразу скачати
-          const purchasesResponse = await fetch(`http://localhost:8080/api/photo-purchases/user/${encodeURIComponent(userEmail)}`);
+          const purchasesResponse = await fetch(`${config.API_BASE_URL}/api/photo-purchases/user/${encodeURIComponent(userEmail)}`);
           const purchases = await purchasesResponse.json();
           const existingPurchase = purchases.find(p => p.photoId === photo.id && p.status === 'COMPLETED' && p.downloadToken);
 
           if (existingPurchase && existingPurchase.downloadToken) {
-            const downloadResponse = await fetch(`http://localhost:8080/api/photo-purchases/download-file?downloadToken=${existingPurchase.downloadToken}`);
+            const downloadResponse = await fetch(`${config.API_BASE_URL}/api/photo-purchases/download-file?downloadToken=${existingPurchase.downloadToken}`);
             if (downloadResponse.ok) {
               const blob = await downloadResponse.blob();
               const url = window.URL.createObjectURL(blob);
@@ -78,7 +79,7 @@ function PhotoGallery() {
 
   const downloadPhoto = async (photo) => {
     try {
-      const response = await fetch(`http://localhost:8080${photo.imageUrl}`);
+      const response = await fetch(`${config.API_BASE_URL}${photo.imageUrl}`);
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -112,7 +113,7 @@ function PhotoGallery() {
         {photos.map(photo => (
           <div key={photo.id} className="card card-animate" style={{ width: 220, textAlign: 'center' }}>
             <img 
-              src={`http://localhost:8080${photo.imageUrl}`} 
+              src={`${config.API_BASE_URL}${photo.imageUrl}`} 
               alt={photo.title} 
               style={{ width: 180, height: 180, objectFit: 'cover', borderRadius: 6 }} 
             />

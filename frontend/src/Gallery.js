@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import config from './config';
 
 function Gallery({ onAddToCart }) {
   const [artworks, setArtworks] = useState([]);
@@ -9,7 +10,7 @@ function Gallery({ onAddToCart }) {
   const [selectedArtwork, setSelectedArtwork] = useState(null);
 
   useEffect(() => {
-    fetch('http://localhost:8080/api/artworks')
+    fetch(`${config.API_BASE_URL}/api/artworks`)
       .then(res => {
         if (!res.ok) throw new Error('Failed to load artworks');
         return res.json();
@@ -57,7 +58,7 @@ function Gallery({ onAddToCart }) {
         {artworks.map(art => (
           <div key={art.id} className="card card-animate" style={{ width: 220, textAlign: 'center' }}>
             <img 
-              src={`http://localhost:8080${art.imageUrl}`} 
+              src={`${config.API_BASE_URL}${art.imageUrl}`} 
               alt={art.title} 
               style={{ width: 180, height: 180, objectFit: 'cover', borderRadius: 6, cursor: 'pointer' }} 
               onClick={() => openModal(art)}
@@ -83,7 +84,7 @@ function Gallery({ onAddToCart }) {
               <i className="fa-solid fa-times"></i>
             </button>
             <img 
-              src={`http://localhost:8080${selectedArtwork.imageUrl}`} 
+              src={`${config.API_BASE_URL}${selectedArtwork.imageUrl}`} 
               alt={selectedArtwork.title} 
               className="modal-image"
             />

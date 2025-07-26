@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import config from './config';
 
 const StripePayment = ({ photo, userEmail, onSuccess, onCancel }) => {
   const [stripe, setStripe] = useState(null);
@@ -18,7 +19,7 @@ const StripePayment = ({ photo, userEmail, onSuccess, onCancel }) => {
 
   useEffect(() => {
     // Отримати публічний ключ Stripe
-    fetch('http://localhost:8080/api/stripe/config')
+    fetch(`${config.API_BASE_URL}/api/stripe/config`)
       .then(res => res.json())
       .then(data => {
         setPublishableKey(data.publishableKey);
@@ -69,7 +70,7 @@ const StripePayment = ({ photo, userEmail, onSuccess, onCancel }) => {
 
     try {
       // Створити платіжний інтент
-      const createIntentResponse = await fetch('http://localhost:8080/api/stripe/create-payment-intent', {
+      const createIntentResponse = await fetch(`${config.API_BASE_URL}/api/stripe/create-payment-intent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -108,7 +109,7 @@ const StripePayment = ({ photo, userEmail, onSuccess, onCancel }) => {
       }
 
       // Підтвердити покупку на сервері
-      const confirmResponse = await fetch('http://localhost:8080/api/stripe/confirm-payment', {
+              const confirmResponse = await fetch(`${config.API_BASE_URL}/api/stripe/confirm-payment`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -133,7 +134,7 @@ const StripePayment = ({ photo, userEmail, onSuccess, onCancel }) => {
         console.log('purchase:', result.purchase);
         if (result.purchase && result.purchase.status === 'COMPLETED' && result.purchase.downloadToken) {
           // Download via backend
-          fetch(`http://localhost:8080/api/photo-purchases/download-file?downloadToken=${result.purchase.downloadToken}`)
+          fetch(`${config.API_BASE_URL}/api/photo-purchases/download-file?downloadToken=${result.purchase.downloadToken}`)
             .then(res => {
               console.log('Download request status:', res.status);
               if (!res.ok) throw new Error('Download failed: ' + res.status);

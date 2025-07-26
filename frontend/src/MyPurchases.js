@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import config from './config';
 
 function MyPurchases() {
   const [email, setEmail] = useState('');
@@ -16,7 +17,7 @@ function MyPurchases() {
     setError(null);
 
     try {
-      const response = await fetch(`http://localhost:8080/api/photo-purchases/user/${encodeURIComponent(email)}`);
+      const response = await fetch(`${config.API_BASE_URL}/api/photo-purchases/user/${encodeURIComponent(email)}`);
       
       if (response.ok) {
         const data = await response.json();
@@ -33,7 +34,7 @@ function MyPurchases() {
 
   const handleDownload = async (purchase) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/photo-purchases/download?downloadToken=${purchase.downloadToken}`);
+      const response = await fetch(`${config.API_BASE_URL}/api/photo-purchases/download?downloadToken=${purchase.downloadToken}`);
       
       if (response.ok) {
         const downloadUrl = await response.text();
