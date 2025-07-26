@@ -3,7 +3,7 @@ import config from './config';
 
 const StripePayment = ({ photo, userEmail, onSuccess, onCancel }) => {
   const [stripe, setStripe] = useState(null);
-  const [elements, setElements] = useState(null);
+
   const [card, setCard] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -34,8 +34,7 @@ const StripePayment = ({ photo, userEmail, onSuccess, onCancel }) => {
 
   useEffect(() => {
     if (stripe && publishableKey) {
-      const elementsInstance = stripe.elements();
-      setElements(elementsInstance);
+              const elementsInstance = stripe.elements();
       
       const cardElement = elementsInstance.create('card', {
         style: {
@@ -280,13 +279,6 @@ const StripePayment = ({ photo, userEmail, onSuccess, onCancel }) => {
   );
 };
 
-function triggerDownload(url, filename) {
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = filename || 'photo';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-}
+
 
 export default StripePayment; 

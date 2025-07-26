@@ -14,7 +14,7 @@ const AdminPanel = () => {
         loadDashboardData();
         loadPurchases();
         loadOrders();
-    }, []);
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     const handle401 = (response) => {
         if (response.status === 401) {
