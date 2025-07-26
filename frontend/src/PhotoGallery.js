@@ -26,22 +26,35 @@ function PhotoGallery() {
   }, []);
 
   const handleDownload = async (photo) => {
+    console.log('🔍 handleDownload called for photo:', photo.title);
+    console.log('💰 Price:', photo.price, 'Type:', typeof photo.price);
+    console.log('📧 Current userEmail:', userEmail);
+    
     if (photo.price && photo.price > 0) {
+      console.log('✅ Price > 0, proceeding to purchase flow');
+      
       // Запитати email користувача, якщо він ще не введений
       if (!userEmail) {
+        console.log('📨 No email set, showing prompt');
         const email = prompt('Please enter your email to purchase this photo:');
-        if (!email) return; // Користувач скасував
+        if (!email) {
+          console.log('❌ User cancelled email prompt');
+          return;
+        }
+        console.log('📨 Email entered:', email);
         setUserEmail(email);
       }
       
-      // Завжди дозволяємо нові покупки - одразу відкриваємо модальне вікно
+      console.log('🛒 Opening purchase modal');
       setPurchaseModal({ show: true, photo: photo });
     } else {
+      console.log('🆓 Free photo, downloading directly');
       await downloadPhoto(photo);
     }
   };
 
   const downloadPhoto = async (photo) => {
+    console.log('⬇️ downloadPhoto called for:', photo.title);
     try {
       const response = await fetch(`${config.API_BASE_URL}${photo.imageUrl}`);
       const blob = await response.blob();
@@ -59,6 +72,7 @@ function PhotoGallery() {
   };
 
   const handlePurchaseSuccess = (purchase) => {
+    console.log('🎉 Purchase successful!', purchase);
     alert(`Purchase successful! Transaction ID: ${purchase.transactionId}\nCheck your email for download link.`);
     setPurchaseModal({ show: false, photo: null });
   };
