@@ -416,9 +416,10 @@
   }
   .hero-content-photo {
     width: 100%;
-    max-width: 340px;
-    height: 320px;
+    max-width: 300px;
+    height: 250px;
     margin: 0 auto;
+    min-width: auto;
   }
 }
 
@@ -477,7 +478,21 @@
   }
   
   .action-card {
-    padding: 2rem;
+    padding: 1.5rem;
+    margin: 0 0.5rem;
+  }
+  
+  .action-card h3 {
+    font-size: 1.8rem;
+  }
+  
+  .action-card p {
+    font-size: 1rem;
+  }
+  
+  .action-btn {
+    padding: 0.9rem 1.8rem;
+    font-size: 1rem;
   }
   
   .action-buttons {
@@ -494,7 +509,8 @@
 
 @media (max-width: 480px) {
   .hero-section {
-    padding: 1rem;
+    padding: 0.8rem;
+    min-height: 50vh;
   }
   
   .hero-title {
@@ -512,7 +528,7 @@
   .artist-section,
   .features-section,
   .quick-actions {
-    padding: 3rem 1rem;
+    padding: 1.5rem 0.5rem;
   }
   
   .artist-stats {
@@ -522,6 +538,27 @@
   
   .tab-link {
     width: calc(50% - 0.5rem);
+  }
+  
+  .action-card {
+    padding: 1rem;
+    margin: 0 0.5rem;
+  }
+  
+  .action-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 0.8rem;
+  }
+  
+  .action-card p {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .action-btn {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    margin: 0.3rem;
   }
 }
 
@@ -542,6 +579,26 @@
   justify-content: center;
 }
 
+/* Mobile Profile Avatar */
+@media (max-width: 768px) {
+  .profile-avatar {
+    width: 200px;
+    height: 200px;
+    top: 16px;
+    right: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-avatar {
+    width: 120px;
+    height: 120px;
+    top: 12px;
+    right: 12px;
+    border: 2px solid #fff;
+  }
+}
+
 .profile-avatar img {
   width: 100%;
   height: 100%;
@@ -549,4 +606,51 @@
   object-position: top;
   border-radius: 50%;
   display: block;
+}
+
+/* Extra Small Mobile Optimization */
+@media (max-width: 360px) {
+  .hero-section {
+    min-height: 40vh;
+    padding: 0.5rem;
+  }
+  
+  .artist-section,
+  .features-section,
+  .quick-actions {
+    padding: 1rem 0.3rem;
+  }
+  
+  .action-card {
+    padding: 0.8rem;
+    margin: 0 0.3rem;
+  }
+  
+  .action-card h3 {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .action-card p {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+  
+  .action-btn {
+    padding: 0.7rem 1rem;
+    font-size: 0.9rem;
+    margin: 0.2rem;
+  }
+  
+  .profile-avatar {
+    width: 80px;
+    height: 80px;
+    top: 8px;
+    right: 8px;
+  }
+  
+  .hero-content-photo {
+    max-width: 200px;
+    height: 180px;
+  }
 } 
