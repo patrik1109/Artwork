@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import StripePayment from './StripePayment';
 import config from './config';
+import './Gallery.css';
 
 function PhotoGallery() {
   const [photos, setPhotos] = useState([]);
@@ -71,29 +72,29 @@ function PhotoGallery() {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div style={{ maxWidth: 900, margin: '2rem auto' }}>
-      <h2>Photo Gallery</h2>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, justifyContent: 'center' }}>
+    <div className="gallery-container">
+      <h2 className="gallery-title">Photo Gallery</h2>
+      <div className="gallery-grid">
         {photos.map(photo => (
-          <div key={photo.id} className="card card-animate" style={{ width: 220, textAlign: 'center' }}>
+          <div key={photo.id} className="gallery-card">
             <img 
               src={`${config.API_BASE_URL}${photo.imageUrl}`} 
               alt={photo.title} 
-              style={{ width: 180, height: 180, objectFit: 'cover', borderRadius: 6 }} 
+              className="gallery-image"
             />
-            <div style={{ margin: '1rem 0 0.5rem' }}><b>{photo.title}</b></div>
-            <div style={{ marginBottom: 8 }}>{photo.photographer}</div>
+            <div className="gallery-title-text">{photo.title}</div>
+            <div className="gallery-subtitle">{photo.photographer}</div>
             {photo.price && photo.price > 0 ? (
-              <div style={{ marginBottom: 8, color: '#e74c3c', fontWeight: 'bold' }}>
+              <div className="gallery-price paid">
                 ${photo.price}
               </div>
             ) : (
-              <div style={{ marginBottom: 8, color: '#27ae60', fontWeight: 'bold' }}>
+              <div className="gallery-price free">
                 Free
               </div>
             )}
-            <button className="btn-animate" onClick={() => handleDownload(photo)}>
-              <i className="fa-solid fa-arrow-down" style={{ marginRight: 8 }}></i>
+            <button className="gallery-button" onClick={() => handleDownload(photo)}>
+              <i className="fa-solid fa-arrow-down"></i>
               {photo.price && photo.price > 0 ? 'Buy & Download' : 'Download'}
             </button>
           </div>

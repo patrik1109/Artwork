@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import config from './config';
+import './Gallery.css';
 
 function Gallery({ onAddToCart }) {
   const [artworks, setArtworks] = useState([]);
@@ -51,25 +52,26 @@ function Gallery({ onAddToCart }) {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div style={{ maxWidth: 900, margin: '2rem auto' }}>
-      <h2>Artworks Gallery</h2>
+    <div className="gallery-container">
+      <h2 className="gallery-title">Artworks Gallery</h2>
       {toast && <div className={`toast${toastHide ? ' hide' : ''}`}>{toast}</div>}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, justifyContent: 'center' }}>
+      <div className="gallery-grid">
         {artworks.map(art => (
-          <div key={art.id} className="card card-animate" style={{ width: 220, textAlign: 'center' }}>
+          <div key={art.id} className="gallery-card">
             <img 
               src={`${config.API_BASE_URL}${art.imageUrl}`} 
               alt={art.title} 
-              style={{ width: 180, height: 180, objectFit: 'cover', borderRadius: 6, cursor: 'pointer' }} 
+              className="gallery-image"
+              style={{ cursor: 'pointer' }}
               onClick={() => openModal(art)}
             />
-            <div style={{ margin: '1rem 0 0.5rem' }}><b>{art.title}</b></div>
+            <div className="gallery-title-text">{art.title}</div>
             <div className="artwork-details">
               <span className="artwork-price">${art.price}</span>
               <span className="artwork-size">{art.sizeX} x {art.sizeY} cm</span>
             </div>
-            <button className="btn-animate" onClick={() => handleAdd(art)}>
-              <i className="fa-solid fa-cart-plus" style={{ marginRight: 8 }}></i>
+            <button className="gallery-button" onClick={() => handleAdd(art)}>
+              <i className="fa-solid fa-cart-plus"></i>
               Add to cart
             </button>
           </div>

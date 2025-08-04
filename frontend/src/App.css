@@ -127,11 +127,58 @@ input {
   opacity: 0;
 }
 
-@media (max-width: 700px) {
-  .App nav {
-    font-size: 1rem;
-    padding: 0.7rem;
+/* Enhanced Mobile Navigation */
+.app-nav {
+  padding: 1rem;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 1.5rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 768px) {
+  .app-nav {
+    padding: 0.8rem 0.5rem;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
   }
+  
+  .nav-btn {
+    font-size: 0.9rem;
+    padding: 0.6rem 0.8rem;
+    flex: 1;
+    min-width: calc(50% - 0.25rem);
+    text-align: center;
+    justify-content: center;
+  }
+  
+  .nav-btn i {
+    margin-right: 0.3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-nav {
+    padding: 0.5rem;
+    gap: 0.3rem;
+  }
+  
+  .nav-btn {
+    font-size: 0.8rem;
+    padding: 0.5rem 0.6rem;
+    min-width: calc(50% - 0.15rem);
+  }
+  
+  .nav-btn i {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 700px) {
   .card {
     padding: 12px 6px 14px 6px;
   }

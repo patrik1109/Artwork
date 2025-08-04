@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import config from './config';
+import './Gallery.css';
 
 function MyPurchases() {
   const [email, setEmail] = useState('');
@@ -70,29 +71,22 @@ function MyPurchases() {
   };
 
   return (
-    <div style={{ maxWidth: 1000, margin: '2rem auto', padding: '0 1rem' }}>
-      <h2>My Purchases</h2>
+    <div className="purchases-container">
+      <h2 className="purchases-title">My Purchases</h2>
       
-      <div style={{ marginBottom: '2rem' }}>
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', marginBottom: '1rem' }}>
+      <div className="purchases-search">
+        <div className="purchases-search-form">
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Enter your email"
-            style={{ padding: '0.5rem', flex: 1, maxWidth: '300px' }}
+            className="purchases-email-input"
           />
           <button 
             onClick={fetchPurchases}
             disabled={loading}
-            style={{ 
-              padding: '0.5rem 1rem', 
-              backgroundColor: '#3498db', 
-              color: 'white', 
-              border: 'none',
-              borderRadius: '4px',
-              cursor: loading ? 'not-allowed' : 'pointer'
-            }}
+            className="purchases-search-btn"
           >
             {loading ? 'Loading...' : 'View Purchases'}
           </button>
@@ -106,19 +100,11 @@ function MyPurchases() {
       )}
 
       {purchases.length > 0 ? (
-        <div style={{ display: 'grid', gap: '1rem' }}>
+        <div className="purchases-grid">
           {purchases.map(purchase => (
-            <div 
-              key={purchase.id} 
-              style={{ 
-                border: '1px solid #ddd', 
-                borderRadius: '8px', 
-                padding: '1rem',
-                backgroundColor: '#f9f9f9'
-              }}
-            >
+            <div key={purchase.id} className="purchase-card">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                <h3 style={{ margin: 0 }}>{purchase.photoTitle}</h3>
+                <h3 className="purchase-photo-title">{purchase.photoTitle}</h3>
                 <span style={{ 
                   color: getStatusColor(purchase.status),
                   fontWeight: 'bold',
@@ -128,20 +114,20 @@ function MyPurchases() {
                 </span>
               </div>
               
-              <div style={{ marginBottom: '0.5rem' }}>
+              <div className="purchase-info">
                 <strong>Amount:</strong> ${purchase.amountPaid}
               </div>
               
-              <div style={{ marginBottom: '0.5rem' }}>
+              <div className="purchase-info">
                 <strong>Purchase Date:</strong> {formatDate(purchase.purchaseDate)}
               </div>
               
-              <div style={{ marginBottom: '0.5rem' }}>
+              <div className="purchase-info">
                 <strong>Transaction ID:</strong> {purchase.transactionId}
               </div>
               
               {purchase.tokenExpiry && (
-                <div style={{ marginBottom: '0.5rem' }}>
+                <div className="purchase-info">
                   <strong>Download Expires:</strong> {formatDate(purchase.tokenExpiry)}
                 </div>
               )}
@@ -149,14 +135,7 @@ function MyPurchases() {
               {purchase.canDownload && (
                 <button 
                   onClick={() => handleDownload(purchase)}
-                  style={{ 
-                    padding: '0.5rem 1rem', 
-                    backgroundColor: '#27ae60', 
-                    color: 'white', 
-                    border: 'none',
-                    borderRadius: '4px',
-                    cursor: 'pointer'
-                  }}
+                  className="purchase-download-btn"
                 >
                   <i className="fa-solid fa-download" style={{ marginRight: '0.5rem' }}></i>
                   Download
