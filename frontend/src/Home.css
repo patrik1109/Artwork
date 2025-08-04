@@ -423,6 +423,31 @@
   }
 }
 
+/* Medium Mobile */
+@media (max-width: 600px) {
+  .hero-section {
+    min-height: 50vh;
+  }
+  
+  .artist-section,
+  .features-section,
+  .quick-actions {
+    padding: 2rem 0.8rem;
+  }
+  
+  .action-card {
+    padding: 1.8rem;
+  }
+  
+  .action-card h3 {
+    font-size: 1.6rem;
+  }
+  
+  .feature-card {
+    padding: 1.5rem;
+  }
+}
+
 @media (max-width: 768px) {
   .hero-title {
     font-size: 2.5rem;
@@ -495,6 +520,19 @@
     font-size: 1rem;
   }
   
+  .feature-card {
+    padding: 1.2rem;
+  }
+  
+  .feature-card h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.6rem;
+  }
+  
+  .feature-card p {
+    font-size: 0.9rem;
+  }
+  
   .action-buttons {
     flex-direction: column;
     align-items: center;
@@ -509,8 +547,8 @@
 
 @media (max-width: 480px) {
   .hero-section {
-    padding: 0.8rem;
-    min-height: 50vh;
+    padding: 0.5rem;
+    min-height: 45vh;
   }
   
   .hero-title {
@@ -528,7 +566,7 @@
   .artist-section,
   .features-section,
   .quick-actions {
-    padding: 1.5rem 0.5rem;
+    padding: 1rem 0.5rem;
   }
   
   .artist-stats {
@@ -538,6 +576,16 @@
   
   .tab-link {
     width: calc(50% - 0.5rem);
+    padding: 0.6rem;
+    font-size: 0.85rem;
+  }
+  
+  .tab-link i {
+    font-size: 1rem;
+  }
+  
+  .tab-link span {
+    font-size: 0.8rem;
   }
   
   .action-card {
@@ -609,48 +657,107 @@
 }
 
 /* Extra Small Mobile Optimization */
-@media (max-width: 360px) {
+@media (max-width: 420px) {
   .hero-section {
-    min-height: 40vh;
-    padding: 0.5rem;
+    min-height: 35vh;
+    padding: 0.3rem;
   }
   
   .artist-section,
   .features-section,
   .quick-actions {
-    padding: 1rem 0.3rem;
+    padding: 0.8rem 0.2rem;
   }
   
   .action-card {
-    padding: 0.8rem;
-    margin: 0 0.3rem;
+    padding: 0.6rem;
+    margin: 0 0.2rem;
   }
   
   .action-card h3 {
-    font-size: 1.3rem;
-    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+    margin-bottom: 0.4rem;
   }
   
   .action-card p {
-    font-size: 0.9rem;
-    margin-bottom: 1rem;
+    font-size: 0.85rem;
+    margin-bottom: 0.8rem;
   }
   
   .action-btn {
-    padding: 0.7rem 1rem;
-    font-size: 0.9rem;
-    margin: 0.2rem;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.85rem;
+    margin: 0.1rem;
   }
   
   .profile-avatar {
-    width: 80px;
-    height: 80px;
-    top: 8px;
-    right: 8px;
+    width: 70px;
+    height: 70px;
+    top: 6px;
+    right: 6px;
   }
   
   .hero-content-photo {
-    max-width: 200px;
-    height: 180px;
+    max-width: 160px;
+    height: 140px;
+  }
+  
+  .hero-title {
+    font-size: 1.6rem;
+  }
+  
+  .title-accent {
+    font-size: 2rem;
+  }
+  
+  .title-subtitle {
+    font-size: 1rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 0.9rem;
+  }
+  
+  .features-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .feature-card {
+    padding: 1rem;
+  }
+  
+  .feature-card h3 {
+    font-size: 1.1rem;
+  }
+  
+  .feature-card p {
+    font-size: 0.85rem;
+  }
+  
+  /* Hide features section on very small screens */
+  .features-section {
+    display: none;
+  }
+  
+  .artist-name {
+    font-size: 1.8rem;
+  }
+  
+  .artist-description {
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+  }
+  
+  .artist-stats {
+    gap: 0.8rem;
+  }
+  
+  .stat-number {
+    font-size: 1.5rem;
+  }
+  
+  .stat-label {
+    font-size: 0.8rem;
   }
 } 
