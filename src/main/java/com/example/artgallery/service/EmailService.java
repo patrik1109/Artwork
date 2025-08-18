@@ -7,6 +7,8 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import java.util.stream.Collectors;
+
 @Service
 public class EmailService {
 
@@ -18,6 +20,9 @@ public class EmailService {
 
     public void sendOrderNotification(OrderRequest order) {
         try {
+            // Build order items string
+            String items = formatOrderDetails(order);
+            
             // Email to administrator
             SimpleMailMessage adminMessage = new SimpleMailMessage();
             String fromEmail = "patrikeevegor@gmail.com".trim();
@@ -42,7 +47,7 @@ public class EmailService {
                 order.getCustomerName(),
                 order.getCustomerEmail(),
                 order.getPhoneNumber(),
-                formatOrderDetails(order),
+                items,
                 order.getTotalPrice()
             );
             adminMessage.setText(adminText);
@@ -53,8 +58,30 @@ public class EmailService {
                 SimpleMailMessage clientMessage = new SimpleMailMessage();
                 clientMessage.setFrom(fromEmail);
                 clientMessage.setTo(order.getCustomerEmail());
-                clientMessage.setSubject("Your order has been received!");
-                clientMessage.setText("Thank you for your order! We will contact you soon.");
+                clientMessage.setSubject("Your order has been received - Order #" + order.getId());
+                String clientText = String.format("""
+                    Dear %s,
+                    
+                    Thank you for your order! We have received your request.
+                    
+                    Order number: %d
+                    
+                    Items:
+                    %s
+                    
+                    Total amount: %s
+                    
+                    We will contact you soon to confirm details.
+                    
+                    Best regards,
+                    Art Gallery Team
+                    """,
+                    order.getCustomerName(),
+                    order.getId(),
+                    items,
+                    order.getTotalPrice()
+                );
+                clientMessage.setText(clientText);
                 emailSender.send(clientMessage);
             }
             System.out.println("Email sent successfully!");
@@ -126,8 +153,17 @@ public class EmailService {
     }
 
     private String formatOrderDetails(OrderRequest order) {
-        // TODO: Add order details formatting (list of artworks)
-        return "List of artworks will be added later";
+        if (order.getArtworks() == null || order.getArtworks().isEmpty()) {
+            return "(no artworks)";
+        }
+        String list = order.getArtworks().stream()
+                .map(a -> String.format("- %s (%s x %s cm) - $%s", 
+                        a.getTitle(),
+                        a.getSizeX() != null ? a.getSizeX() : "-",
+                        a.getSizeY() != null ? a.getSizeY() : "-",
+                        a.getPrice() != null ? a.getPrice() : "0.00"))
+                .collect(Collectors.joining("\n"));
+        return list;
     }
     
     // Method for sending order status update notification
