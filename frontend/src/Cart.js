@@ -16,7 +16,6 @@ function Cart({ cart, onRemove, onOrder }) {
   const [publishableKey, setPublishableKey] = useState('');
   const [stripe, setStripe] = useState(null);
   const [isPaying, setIsPaying] = useState(false);
-  const [postalCode, setPostalCode] = useState('');
   const elementsRef = useRef(null);
   const cardRef = useRef(null);
   const mountedRef = useRef(false);
@@ -65,7 +64,6 @@ function Cart({ cart, onRemove, onOrder }) {
     if (e.target.name === 'shippingAddress') setAddressError('');
     if (e.target.name === 'country') setCountryError('');
     if (e.target.name === 'city') setCityError('');
-    if (e.target.name === 'postalCode') setPostalCode('');
   };
 
   const handlePhoneChange = phone => {
@@ -86,7 +84,6 @@ function Cart({ cart, onRemove, onOrder }) {
     if (cart.length === 0) { setStatus('Your cart is empty'); hasErrors = true; }
     if (hasErrors) return;
     setIsPaying(true);
-    setPostalCode(form.postalCode || '');
   };
 
   const handlePayAndPlaceOrder = async () => {
