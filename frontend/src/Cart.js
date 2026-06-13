@@ -6,10 +6,13 @@ import config from './config';
 import './Gallery.css';
 
 function Cart({ cart, onRemove, onOrder }) {
-  const [form, setForm] = useState({ name: '', email: '', phone: '' });
+  const [form, setForm] = useState({ name: '', email: '', phone: '', shippingAddress: '', country: '', city: '', postalCode: '' });
   const [status, setStatus] = useState('');
   const [emailError, setEmailError] = useState('');
   const [phoneError, setPhoneError] = useState('');
+  const [addressError, setAddressError] = useState('');
+  const [countryError, setCountryError] = useState('');
+  const [cityError, setCityError] = useState('');
   const [publishableKey, setPublishableKey] = useState('');
   const [stripe, setStripe] = useState(null);
   const [isPaying, setIsPaying] = useState(false);
@@ -58,9 +61,11 @@ function Cart({ cart, onRemove, onOrder }) {
 
   const handleChange = e => {
     setForm({ ...form, [e.target.name]: e.target.value });
-    if (e.target.name === 'email') {
-      setEmailError('');
-    }
+    if (e.target.name === 'email') setEmailError('');
+    if (e.target.name === 'shippingAddress') setAddressError('');
+    if (e.target.name === 'country') setCountryError('');
+    if (e.target.name === 'city') setCityError('');
+    if (e.target.name === 'postalCode') setPostalCode('');
   };
 
   const handlePhoneChange = phone => {
@@ -70,15 +75,18 @@ function Cart({ cart, onRemove, onOrder }) {
 
   const startPayment = (e) => {
     e.preventDefault();
-    setEmailError(''); setPhoneError('');
+    setEmailError(''); setPhoneError(''); setAddressError(''); setCountryError(''); setCityError('');
     let hasErrors = false;
     if (!form.email.trim()) { setEmailError('Email is required.'); hasErrors = true; }
     else if (!validateEmail(form.email)) { setEmailError('Please enter a valid email address.'); hasErrors = true; }
     if (!form.phone.trim()) { setPhoneError('Phone number is required.'); hasErrors = true; }
+    if (!form.country.trim()) { setCountryError('Country is required.'); hasErrors = true; }
+    if (!form.city.trim()) { setCityError('City is required.'); hasErrors = true; }
+    if (!form.shippingAddress.trim()) { setAddressError('Shipping address is required.'); hasErrors = true; }
     if (cart.length === 0) { setStatus('Your cart is empty'); hasErrors = true; }
     if (hasErrors) return;
     setIsPaying(true);
-    setPostalCode('');
+    setPostalCode(form.postalCode || '');
   };
 
   const handlePayAndPlaceOrder = async () => {
@@ -98,7 +106,7 @@ function Cart({ cart, onRemove, onOrder }) {
           card: cardRef.current, 
           billing_details: { 
             email: form.email,
-            address: { postal_code: postalCode || undefined }
+            address: { postal_code: undefined }
           } 
         }
       });
@@ -112,6 +120,10 @@ function Cart({ cart, onRemove, onOrder }) {
           customerName: form.name,
           customerEmail: form.email,
           phoneNumber: form.phone,
+          shippingAddress: form.shippingAddress,
+          country: form.country,
+          city: form.city,
+          postalCode: form.postalCode,
           artworkIds: cart.map(a => a.id)
         })
       });
@@ -169,6 +181,27 @@ function Cart({ cart, onRemove, onOrder }) {
                 />
                 {phoneError && <div className="error-message">{phoneError}</div>}
               </div>
+              <div className="form-row">
+                <div className="form-group half">
+                  <input name="country" placeholder="Country *" value={form.country} onChange={handleChange} className="form-input" />
+                  {countryError && <div className="error-message">{countryError}</div>}
+                </div>
+                <div className="form-group half">
+                  <input name="city" placeholder="City *" value={form.city} onChange={handleChange} className="form-input" />
+                  {cityError && <div className="error-message">{cityError}</div>}
+                </div>
+              </div>
+              <div className="form-row">
+                <div className="form-group half">
+                  <input name="postalCode" placeholder="Postal code (optional)" value={form.postalCode} onChange={handleChange} className="form-input" />
+                </div>
+                <div className="form-group half">
+                </div>
+              </div>
+              <div className="form-group">
+                <textarea name="shippingAddress" placeholder="Shipping address *" value={form.shippingAddress} onChange={handleChange} className="form-input" rows={3} />
+                {addressError && <div className="error-message">{addressError}</div>}
+              </div>
               {!isPaying && (
                 <button className="cart-submit-btn" type="submit">
                   <i className="fa-solid fa-credit-card"></i>Pay & Place order
@@ -185,12 +218,7 @@ function Cart({ cart, onRemove, onOrder }) {
                     <div><strong>Total:</strong> ${cart.reduce((s,a)=>s+Number(a.price||0),0).toFixed(2)}</div>
                   </div>
                   <input className="stripe-input" value={form.email} disabled />
-                  <input 
-                    className="stripe-input" 
-                    placeholder="Postal code (optional)" 
-                    value={postalCode} 
-                    onChange={e => setPostalCode(e.target.value)} 
-                  />
+                  {/* Postal code removed from payment modal; collected in address form */}
                   <div id="cart-card-element" className="stripe-card-element"></div>
                   <div className="stripe-buttons">
                     <button className="stripe-btn stripe-btn-secondary" onClick={closePayment}>Cancel</button>

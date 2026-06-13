@@ -149,6 +149,10 @@ public class StripePaymentController {
             String customerName = (String) request.get("customerName");
             String customerEmail = (String) request.get("customerEmail");
             String phoneNumber = (String) request.get("phoneNumber");
+            String shippingAddress = (String) request.get("shippingAddress");
+            String country = (String) request.get("country");
+            String city = (String) request.get("city");
+            String postalCode = (String) request.get("postalCode");
             @SuppressWarnings("unchecked")
             List<Object> artworkIdsRaw = (List<Object>) request.get("artworkIds");
             List<Long> artworkIds = artworkIdsRaw == null ? List.of() : artworkIdsRaw.stream()
@@ -169,6 +173,10 @@ public class StripePaymentController {
             orderDto.setCustomerEmail(customerEmail);
             orderDto.setPhoneNumber(phoneNumber);
             orderDto.setStatus("PAID");
+            orderDto.setShippingAddress(shippingAddress);
+            orderDto.setCountry(country);
+            orderDto.setCity(city);
+            orderDto.setPostalCode(postalCode);
 
             var order = orderRequestService.createOrder(orderDto);
             // Ensure status is PAID

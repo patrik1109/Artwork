@@ -9,97 +9,124 @@ import java.util.List;
 
 public class OrderRequestDTO {
 
-    private Long id;
-    @NotEmpty
-    private List<Long> artworkIds;
-    private String artworkTitle;
-    private String customerName;
-    @Email
-    private String customerEmail;
-    private String size;
-    private String status;
-    private String shippingAddress;
+	private Long id;
+	@NotEmpty
+	private List<Long> artworkIds;
+	private String artworkTitle;
+	private String customerName;
+	@Email
+	private String customerEmail;
+	private String size;
+	private String status;
+	private String shippingAddress;
+	private String country;
+	private String city;
+	private String postalCode;
 
-    private BigDecimal totalPrice;
-    private String phoneNumber;
+	private BigDecimal totalPrice;
+	private String phoneNumber;
 
-    public List<Long> getArtworkIds() {
-        return artworkIds;
-    }
+	public List<Long> getArtworkIds() {
+		return artworkIds;
+	}
 
-    public void setArtworkIds(List<Long> artworkIds) {
-        this.artworkIds = artworkIds;
-    }
+	public void setArtworkIds(List<Long> artworkIds) {
+		this.artworkIds = artworkIds;
+	}
 
-    public BigDecimal getTotalPrice() {
-        return totalPrice;
-    }
+	public BigDecimal getTotalPrice() {
+		return totalPrice;
+	}
 
-    public void setTotalPrice(BigDecimal totalPrice) {
-        this.totalPrice = totalPrice;
-    }
+	public void setTotalPrice(BigDecimal totalPrice) {
+		this.totalPrice = totalPrice;
+	}
 
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public Long getId() {
+		return id;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    public String getArtworkTitle() {
-        return artworkTitle;
-    }
+	public String getArtworkTitle() {
+		return artworkTitle;
+	}
 
-    public void setArtworkTitle(String artworkTitle) {
-        this.artworkTitle = artworkTitle;
-    }
+	public void setArtworkTitle(String artworkTitle) {
+		this.artworkTitle = artworkTitle;
+	}
 
-    public String getCustomerName() {
-        return customerName;
-    }
+	public String getCustomerName() {
+		return customerName;
+	}
 
-    public void setCustomerName(String customerName) {
-        this.customerName = customerName;
-    }
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
+	}
 
-    public String getCustomerEmail() {
-        return customerEmail;
-    }
+	public String getCustomerEmail() {
+		return customerEmail;
+	}
 
-    public void setCustomerEmail(String customerEmail) {
-        this.customerEmail = customerEmail;
-    }
+	public void setCustomerEmail(String customerEmail) {
+		this.customerEmail = customerEmail;
+	}
 
-    public String getSize() {
-        return size;
-    }
+	public String getSize() {
+		return size;
+	}
 
-    public void setSize(String size) {
-        this.size = size;
-    }
+	public void setSize(String size) {
+		this.size = size;
+	}
 
-    public String getStatus() {
-        return status;
-    }
+	public String getStatus() {
+		return status;
+	}
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
-    public String getShippingAddress() {
-        return shippingAddress;
-    }
+	public String getShippingAddress() {
+		return shippingAddress;
+	}
 
-    public void setShippingAddress(String shippingAddress) {
-        this.shippingAddress = shippingAddress;
-    }
+	public void setShippingAddress(String shippingAddress) {
+		this.shippingAddress = shippingAddress;
+	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getPostalCode() {
+		return postalCode;
+	}
+
+	public void setPostalCode(String postalCode) {
+		this.postalCode = postalCode;
+	}
 }

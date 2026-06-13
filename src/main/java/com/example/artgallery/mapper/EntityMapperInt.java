@@ -11,27 +11,35 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface EntityMapperInt {
 
-    ArtworkDTO toArtworkDTO(Artwork artwork);
+	ArtworkDTO toArtworkDTO(Artwork artwork);
 
-    Artwork toArtwork(ArtworkDTO dto);
+	Artwork toArtwork(ArtworkDTO dto);
 
-    @Mapping(target = "artworkIds", expression = "java(orderRequest.getArtworks().stream().map(Artwork::getId).toList())")
-    @Mapping(source = "totalPrice", target = "totalPrice")
-    @Mapping(source = "phoneNumber", target = "phoneNumber")
-    OrderRequestDTO toOrderRequestDTO(OrderRequest orderRequest);
+	@Mapping(target = "artworkIds", expression = "java(orderRequest.getArtworks().stream().map(Artwork::getId).toList())")
+	@Mapping(source = "totalPrice", target = "totalPrice")
+	@Mapping(source = "phoneNumber", target = "phoneNumber")
+	@Mapping(source = "shippingAddress", target = "shippingAddress")
+	@Mapping(source = "country", target = "country")
+	@Mapping(source = "city", target = "city")
+	@Mapping(source = "postalCode", target = "postalCode")
+	OrderRequestDTO toOrderRequestDTO(OrderRequest orderRequest);
 
-    @Mapping(target = "artworks", ignore = true) // ти встановиш вручну після мапінгу
-    @Mapping(source = "totalPrice", target = "totalPrice")
-    @Mapping(source = "phoneNumber", target = "phoneNumber")
-    OrderRequest toOrderRequest(OrderRequestDTO dto);
+	@Mapping(target = "artworks", ignore = true)
+	@Mapping(source = "totalPrice", target = "totalPrice")
+	@Mapping(source = "phoneNumber", target = "phoneNumber")
+	@Mapping(source = "shippingAddress", target = "shippingAddress")
+	@Mapping(source = "country", target = "country")
+	@Mapping(source = "city", target = "city")
+	@Mapping(source = "postalCode", target = "postalCode")
+	OrderRequest toOrderRequest(OrderRequestDTO dto);
 
-    @Mapping(source = "price", target = "price")
-    @Mapping(source = "downloadUrl", target = "downloadUrl")
-    PhotoDTO toPhotoDTO(Photo photo);
-    
-    @Mapping(source = "price", target = "price")
-    @Mapping(source = "downloadUrl", target = "downloadUrl")
-    Photo toPhoto(PhotoDTO dto);
+	@Mapping(source = "price", target = "price")
+	@Mapping(source = "downloadUrl", target = "downloadUrl")
+	PhotoDTO toPhotoDTO(Photo photo);
+	
+	@Mapping(source = "price", target = "price")
+	@Mapping(source = "downloadUrl", target = "downloadUrl")
+	Photo toPhoto(PhotoDTO dto);
 }
 
 

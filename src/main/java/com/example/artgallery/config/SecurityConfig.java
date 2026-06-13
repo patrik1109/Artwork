@@ -22,8 +22,8 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                // 🔓 дозволити actuator health без авторизації
-                .requestMatchers("/actuator/health").permitAll()
+                // 🔓 дозволити health-check без авторизації
+                .requestMatchers("/health", "/actuator/health").permitAll()
 
                 // 🔒 захистити admin API
                 .requestMatchers("/api/admin/**").authenticated()
