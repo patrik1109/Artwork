@@ -13,7 +13,9 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins(
                     "http://localhost:3000",  // для локальної розробки
-                    "https://artwork-production-fec7.up.railway.app"  // для production
+                    "https://artwork-production-fec7.up.railway.app",  // railway-домен фронта
+                    "https://mishvazovski.com",  // кастомний домен
+                    "https://www.mishvazovski.com"  // кастомний домен (www)
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD")
                 .allowedHeaders("*")
