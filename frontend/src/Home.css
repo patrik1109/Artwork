@@ -432,13 +432,21 @@
     flex: none;
     width: 100%;
     max-width: 300px;
-    height: 250px;
+    height: auto;
     min-width: auto;
     min-height: auto;
     margin: 1.5rem auto 0;
     justify-content: center;
     border-radius: 12px;
+    background: transparent;
+    box-shadow: none;
     order: 1;
+  }
+  .hero-content-photo img {
+    height: auto;
+    max-height: 360px;
+    object-fit: contain;
+    border-radius: 12px;
   }
 }
 
@@ -717,8 +725,8 @@
   }
   
   .hero-content-photo {
-    max-width: 160px;
-    height: 140px;
+    max-width: 220px;
+    height: auto;
   }
   
   .hero-title {
