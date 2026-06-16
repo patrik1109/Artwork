@@ -83,10 +83,10 @@
 
 .title-accent {
   display: block;
-  color: #0D47A1;
+  color: #ffd700;
   font-size: 5rem;
   font-weight: 800;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
   margin-bottom: 0.5rem;
 }
 

@@ -140,18 +140,89 @@ input {
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-/* On mobile show the page content (name + photo) first, nav buttons below */
+/* Hamburger toggle (transparent, three lines) - hidden on desktop */
+.nav-toggle {
+  display: none;
+  position: fixed;
+  top: 14px;
+  right: 14px;
+  z-index: 1100;
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.nav-toggle span {
+  display: block;
+  width: 28px;
+  height: 3px;
+  border-radius: 2px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  transition: transform 0.25s ease, opacity 0.2s ease;
+}
+
+.nav-toggle.open span:nth-child(1) {
+  transform: translateY(9px) rotate(45deg);
+}
+.nav-toggle.open span:nth-child(2) {
+  opacity: 0;
+}
+.nav-toggle.open span:nth-child(3) {
+  transform: translateY(-9px) rotate(-45deg);
+}
+
+.nav-backdrop {
+  display: none;
+}
+
+/* Mobile: hide the inline nav and reveal it as a dropdown via the hamburger */
 @media (max-width: 900px) {
-  .App {
+  .nav-toggle {
+    display: flex;
+  }
+  .nav-backdrop {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.35);
+    z-index: 1080;
+  }
+  .App .app-nav {
+    display: none;
+  }
+  .App .app-nav.open {
     display: flex;
     flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+    position: fixed;
+    top: 66px;
+    right: 14px;
+    width: 220px;
+    max-width: calc(100vw - 28px);
+    margin: 0;
+    padding: 0.6rem;
+    border: none;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+    z-index: 1090;
   }
-  .app-nav {
-    order: 2;
-    margin-top: 1.5rem;
-    margin-bottom: 0;
-    border-top: 1px solid #eee;
-    border-bottom: none;
+  .App .app-nav.open .nav-btn {
+    width: 100%;
+    min-width: 0;
+    justify-content: flex-start;
   }
 }
 

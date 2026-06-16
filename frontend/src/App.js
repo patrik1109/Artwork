@@ -10,6 +10,8 @@ import './App.css';
 
 function App() {
   const [cart, setCart] = useState([]);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const closeMenu = () => setMenuOpen(false);
 
   const handleAddToCart = (art) => {
     setCart((prev) => [...prev, art]);
@@ -26,12 +28,23 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <nav className="app-nav">
-          <Link to="/" className="btn-animate nav-btn"><i className="fa-solid fa-house"></i>Home</Link>
-          <Link to="/gallery" className="btn-animate nav-btn"><i className="fa-solid fa-image"></i>Artworks</Link>
-          <Link to="/photos" className="btn-animate nav-btn"><i className="fa-solid fa-camera"></i>Photos</Link>
-          <Link to="/my-purchases" className="btn-animate nav-btn"><i className="fa-solid fa-shopping-bag"></i>Purchases</Link>
-          <Link to="/cart" className="btn-animate nav-btn"><i className="fa-solid fa-cart-shopping"></i>Cart ({cart.length})</Link>
+        <button
+          className={`nav-toggle${menuOpen ? ' open' : ''}`}
+          onClick={() => setMenuOpen(o => !o)}
+          aria-label="Menu"
+          aria-expanded={menuOpen}
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        {menuOpen && <div className="nav-backdrop" onClick={closeMenu}></div>}
+        <nav className={`app-nav${menuOpen ? ' open' : ''}`}>
+          <Link to="/" className="btn-animate nav-btn" onClick={closeMenu}><i className="fa-solid fa-house"></i>Home</Link>
+          <Link to="/gallery" className="btn-animate nav-btn" onClick={closeMenu}><i className="fa-solid fa-image"></i>Artworks</Link>
+          <Link to="/photos" className="btn-animate nav-btn" onClick={closeMenu}><i className="fa-solid fa-camera"></i>Photos</Link>
+          <Link to="/my-purchases" className="btn-animate nav-btn" onClick={closeMenu}><i className="fa-solid fa-shopping-bag"></i>Purchases</Link>
+          <Link to="/cart" className="btn-animate nav-btn" onClick={closeMenu}><i className="fa-solid fa-cart-shopping"></i>Cart ({cart.length})</Link>
         </nav>
         <Routes>
           <Route path="/" element={<Home />} />
