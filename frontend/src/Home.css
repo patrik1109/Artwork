@@ -423,7 +423,7 @@
     width: 100%;
     align-items: center;
     padding: 1.5rem 1rem;
-    order: 2;
+    order: 1;
   }
   .hero-content {
     flex-direction: column;
@@ -435,12 +435,12 @@
     height: auto;
     min-width: auto;
     min-height: auto;
-    margin: 1.5rem auto 0;
+    margin: 0 auto 1.5rem;
     justify-content: center;
     border-radius: 12px;
     background: transparent;
     box-shadow: none;
-    order: 1;
+    order: 2;
   }
   .hero-content-photo img {
     height: auto;
