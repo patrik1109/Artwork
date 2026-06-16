@@ -155,17 +155,18 @@
   }
   
   .gallery-grid {
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    grid-template-columns: 1fr;
     gap: 1rem;
   }
   
   .gallery-card {
-    max-width: 180px;
+    max-width: 340px;
+    margin: 0 auto;
     padding: 0.8rem;
   }
   
   .gallery-image {
-    height: 140px;
+    height: 220px;
   }
   
   .gallery-title-text {
@@ -196,12 +197,12 @@
   }
   
   .gallery-card {
-    max-width: 160px;
+    max-width: 300px;
     margin: 0 auto;
   }
   
   .gallery-image {
-    height: 120px;
+    height: 200px;
   }
 }
 
