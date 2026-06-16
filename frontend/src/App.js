@@ -32,7 +32,6 @@ function App() {
           <Link to="/photos" className="btn-animate nav-btn"><i className="fa-solid fa-camera"></i>Photos</Link>
           <Link to="/my-purchases" className="btn-animate nav-btn"><i className="fa-solid fa-shopping-bag"></i>Purchases</Link>
           <Link to="/cart" className="btn-animate nav-btn"><i className="fa-solid fa-cart-shopping"></i>Cart ({cart.length})</Link>
-          <Link to="/admin" className="btn-animate nav-btn" style={{ background: '#dc3545', color: 'white' }}><i className="fa-solid fa-cog"></i>Admin</Link>
         </nav>
         <Routes>
           <Route path="/" element={<Home />} />

@@ -140,6 +140,21 @@ input {
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
+/* On mobile show the page content (name + photo) first, nav buttons below */
+@media (max-width: 900px) {
+  .App {
+    display: flex;
+    flex-direction: column;
+  }
+  .app-nav {
+    order: 2;
+    margin-top: 1.5rem;
+    margin-bottom: 0;
+    border-top: 1px solid #eee;
+    border-bottom: none;
+  }
+}
+
 @media (max-width: 768px) {
   .app-nav {
     padding: 0.8rem 0.5rem;
