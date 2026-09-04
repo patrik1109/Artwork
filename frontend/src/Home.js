@@ -18,6 +18,10 @@ const Home = () => {
             <i className="fa-solid fa-camera"></i>
             <span>Photo Gallery</span>
           </Link>
+          <Link to="/videos" className="tab-link">
+            <i className="fa-solid fa-video"></i>
+            <span>Video Gallery</span>
+          </Link>
           <Link to="/my-purchases" className="tab-link">
             <i className="fa-solid fa-shopping-bag"></i>
             <span>My Purchases</span>

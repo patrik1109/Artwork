@@ -6,6 +6,8 @@ import com.example.artgallery.entity.Artwork;
 import com.example.artgallery.entity.OrderRequest;
 import com.example.artgallery.entity.Photo;
 import com.example.artgallery.dto.PhotoDTO;
+import com.example.artgallery.entity.Video;
+import com.example.artgallery.dto.VideoDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
@@ -40,6 +42,14 @@ public interface EntityMapperInt {
 	@Mapping(source = "price", target = "price")
 	@Mapping(source = "downloadUrl", target = "downloadUrl")
 	Photo toPhoto(PhotoDTO dto);
+
+	@Mapping(source = "price", target = "price")
+	@Mapping(source = "downloadUrl", target = "downloadUrl")
+	VideoDTO toVideoDTO(Video video);
+
+	@Mapping(source = "price", target = "price")
+	@Mapping(source = "downloadUrl", target = "downloadUrl")
+	Video toVideo(VideoDTO dto);
 }
 
 

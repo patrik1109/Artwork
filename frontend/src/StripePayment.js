@@ -1,24 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import config from './config';
 
-const StripePayment = ({ photo, userEmail, onSuccess, onCancel }) => {
-  const [stripe, setStripe] = useState(null);
+const StripePayment = ({ photo, item, itemType = 'photo', userEmail, onSuccess, onCancel }) => {
+  // Support both legacy `photo` prop and generic `item` prop
+  const product = item || photo;
+  const type = item ? itemType : 'photo';
 
+  const [stripe, setStripe] = useState(null);
   const [card, setCard] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [email, setEmail] = useState(userEmail || ''); // Використовуємо переданий email
+  const [email, setEmail] = useState(userEmail || '');
   const [publishableKey, setPublishableKey] = useState('');
 
   useEffect(() => {
-    // Встановлюємо email, якщо він переданий
     if (userEmail) {
       setEmail(userEmail);
     }
   }, [userEmail]);
 
   useEffect(() => {
-    // Отримати публічний ключ Stripe
     fetch(`${config.API_BASE_URL}/api/stripe/config`)
       .then(res => res.json())
       .then(data => {
@@ -34,8 +35,8 @@ const StripePayment = ({ photo, userEmail, onSuccess, onCancel }) => {
 
   useEffect(() => {
     if (stripe && publishableKey) {
-              const elementsInstance = stripe.elements();
-      
+      const elementsInstance = stripe.elements();
+
       const cardElement = elementsInstance.create('card', {
         style: {
           base: {
@@ -50,7 +51,7 @@ const StripePayment = ({ photo, userEmail, onSuccess, onCancel }) => {
           },
         },
       });
-      
+
       cardElement.mount('#card-element');
       setCard(cardElement);
     }
@@ -58,7 +59,7 @@ const StripePayment = ({ photo, userEmail, onSuccess, onCancel }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    
+
     if (!email) {
       setError('Please enter your email');
       return;
@@ -68,19 +69,33 @@ const StripePayment = ({ photo, userEmail, onSuccess, onCancel }) => {
     setError(null);
 
     try {
-      // Створити платіжний інтент
-      const createIntentResponse = await fetch(`${config.API_BASE_URL}/api/stripe/create-payment-intent`, {
+      const isVideo = type === 'video';
+      const createIntentUrl = isVideo
+        ? `${config.API_BASE_URL}/api/stripe/create-video-payment-intent`
+        : `${config.API_BASE_URL}/api/stripe/create-payment-intent`;
+      const confirmUrl = isVideo
+        ? `${config.API_BASE_URL}/api/stripe/confirm-video-payment`
+        : `${config.API_BASE_URL}/api/stripe/confirm-payment`;
+      const downloadUrl = isVideo
+        ? `${config.API_BASE_URL}/api/video-purchases/download-file`
+        : `${config.API_BASE_URL}/api/photo-purchases/download-file`;
+
+      const intentBody = {
+        amount: product.price,
+        currency: 'usd',
+        description: `Purchase: ${product.title}`,
+        customerEmail: email,
+      };
+      if (isVideo) {
+        intentBody.videoId = product.id;
+      } else {
+        intentBody.photoId = product.id;
+      }
+
+      const createIntentResponse = await fetch(createIntentUrl, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          amount: photo.price,
-          currency: 'usd',
-          description: `Purchase: ${photo.title}`,
-          customerEmail: email,
-          photoId: photo.id,
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(intentBody),
       });
 
       if (!createIntentResponse.ok) {
@@ -89,13 +104,10 @@ const StripePayment = ({ photo, userEmail, onSuccess, onCancel }) => {
 
       const { clientSecret, paymentIntentId } = await createIntentResponse.json();
 
-      // Підтвердити платіж
       const { error: confirmError } = await stripe.confirmCardPayment(clientSecret, {
         payment_method: {
           card: card,
-          billing_details: {
-            email: email,
-          },
+          billing_details: { email: email },
         },
       });
 
@@ -103,19 +115,22 @@ const StripePayment = ({ photo, userEmail, onSuccess, onCancel }) => {
         throw new Error(confirmError.message);
       }
 
-      // Підтвердити покупку на сервері
-              const confirmResponse = await fetch(`${config.API_BASE_URL}/api/stripe/confirm-payment`, {
+      const confirmBody = {
+        customerEmail: email,
+        paymentIntentId: paymentIntentId,
+        amount: product.price,
+        currency: 'usd',
+      };
+      if (isVideo) {
+        confirmBody.videoId = product.id;
+      } else {
+        confirmBody.photoId = product.id;
+      }
+
+      const confirmResponse = await fetch(confirmUrl, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          photoId: photo.id,
-          customerEmail: email,
-          paymentIntentId: paymentIntentId,
-          amount: photo.price,
-          currency: 'usd',
-        }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(confirmBody),
       });
 
       if (!confirmResponse.ok) {
@@ -123,13 +138,11 @@ const StripePayment = ({ photo, userEmail, onSuccess, onCancel }) => {
       }
 
       const result = await confirmResponse.json();
-      
+
       if (result.success) {
         onSuccess(result.purchase);
-        console.log('purchase:', result.purchase);
         if (result.purchase && result.purchase.status === 'COMPLETED' && result.purchase.downloadToken) {
-          // Download via backend
-          fetch(`${config.API_BASE_URL}/api/photo-purchases/download-file?downloadToken=${result.purchase.downloadToken}`)
+          fetch(`${downloadUrl}?downloadToken=${result.purchase.downloadToken}`)
             .then(res => {
               if (!res.ok) throw new Error('Download failed: ' + res.status);
               return res.blob();
@@ -138,7 +151,7 @@ const StripePayment = ({ photo, userEmail, onSuccess, onCancel }) => {
               const url = window.URL.createObjectURL(blob);
               const link = document.createElement('a');
               link.href = url;
-              link.download = photo.title || 'photo.jpg';
+              link.download = product.title || (isVideo ? 'video.mp4' : 'photo.jpg');
               document.body.appendChild(link);
               link.click();
               document.body.removeChild(link);
@@ -148,7 +161,6 @@ const StripePayment = ({ photo, userEmail, onSuccess, onCancel }) => {
               console.error('Download error:', err);
             });
         } else {
-          // Not completed yet
           alert('Payment is not confirmed yet. Please wait for confirmation email.');
         }
       } else {
@@ -185,9 +197,9 @@ const StripePayment = ({ photo, userEmail, onSuccess, onCancel }) => {
         overflowY: 'auto'
       }}>
         <h3>Complete Your Purchase</h3>
-        <p><strong>{photo.title}</strong></p>
-        <p>Price: <strong>${photo.price}</strong></p>
-        
+        <p><strong>{product.title}</strong></p>
+        <p>Price: <strong>${product.price}</strong></p>
+
         {error && (
           <div style={{
             backgroundColor: '#fee',
@@ -221,7 +233,7 @@ const StripePayment = ({ photo, userEmail, onSuccess, onCancel }) => {
               required
             />
           </div>
-          
+
           <div style={{ marginBottom: '1rem' }}>
             <label>Card Details:</label>
             <div
@@ -235,7 +247,7 @@ const StripePayment = ({ photo, userEmail, onSuccess, onCancel }) => {
               }}
             />
           </div>
-          
+
           <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
             <button
               type="button"
@@ -265,7 +277,7 @@ const StripePayment = ({ photo, userEmail, onSuccess, onCancel }) => {
                 fontSize: '16px'
               }}
             >
-              {loading ? 'Processing...' : `Pay $${photo.price}`}
+              {loading ? 'Processing...' : `Pay $${product.price}`}
             </button>
           </div>
         </form>
@@ -274,6 +286,4 @@ const StripePayment = ({ photo, userEmail, onSuccess, onCancel }) => {
   );
 };
 
-
-
-export default StripePayment; 
+export default StripePayment;

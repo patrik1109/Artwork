@@ -18,14 +18,35 @@ function MyPurchases() {
     setError(null);
 
     try {
-      const response = await fetch(`${config.API_BASE_URL}/api/photo-purchases/user/${encodeURIComponent(email)}`);
-      
-      if (response.ok) {
-        const data = await response.json();
-        setPurchases(data);
-      } else {
+      const [photosRes, videosRes] = await Promise.all([
+        fetch(`${config.API_BASE_URL}/api/photo-purchases/user/${encodeURIComponent(email)}`),
+        fetch(`${config.API_BASE_URL}/api/video-purchases/user/${encodeURIComponent(email)}`)
+      ]);
+
+      if (!photosRes.ok || !videosRes.ok) {
         setError('Failed to fetch purchases');
+        return;
       }
+
+      const photos = await photosRes.json();
+      const videos = await videosRes.json();
+
+      const combined = [
+        ...photos.map(p => ({
+          ...p,
+          type: 'photo',
+          title: p.photoTitle,
+          downloadEndpoint: 'photo-purchases'
+        })),
+        ...videos.map(v => ({
+          ...v,
+          type: 'video',
+          title: v.videoTitle,
+          downloadEndpoint: 'video-purchases'
+        }))
+      ].sort((a, b) => new Date(b.purchaseDate) - new Date(a.purchaseDate));
+
+      setPurchases(combined);
     } catch (e) {
       setError('Error: ' + e.message);
     } finally {
@@ -35,18 +56,20 @@ function MyPurchases() {
 
   const handleDownload = async (purchase) => {
     try {
-      const response = await fetch(`${config.API_BASE_URL}/api/photo-purchases/download?downloadToken=${purchase.downloadToken}`);
-      
+      const response = await fetch(
+        `${config.API_BASE_URL}/api/${purchase.downloadEndpoint}/download-file?downloadToken=${purchase.downloadToken}`
+      );
+
       if (response.ok) {
-        const downloadUrl = await response.text();
-        
-        // Створюємо тимчасове посилання для скачування
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
         const link = document.createElement('a');
-        link.href = downloadUrl;
-        link.download = purchase.photoTitle || 'photo';
+        link.href = url;
+        link.download = purchase.title || (purchase.type === 'video' ? 'video.mp4' : 'photo.jpg');
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
       } else {
         const errorText = await response.text();
         alert(`Download failed: ${errorText}`);
@@ -73,7 +96,7 @@ function MyPurchases() {
   return (
     <div className="purchases-container">
       <h2 className="purchases-title">My Purchases</h2>
-      
+
       <div className="purchases-search">
         <div className="purchases-search-form">
           <input
@@ -83,7 +106,7 @@ function MyPurchases() {
             placeholder="Enter your email"
             className="purchases-email-input"
           />
-          <button 
+          <button
             onClick={fetchPurchases}
             disabled={loading}
             className="purchases-search-btn"
@@ -102,10 +125,13 @@ function MyPurchases() {
       {purchases.length > 0 ? (
         <div className="purchases-grid">
           {purchases.map(purchase => (
-            <div key={purchase.id} className="purchase-card">
+            <div key={`${purchase.type}-${purchase.id}`} className="purchase-card">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                <h3 className="purchase-photo-title">{purchase.photoTitle}</h3>
-                <span style={{ 
+                <h3 className="purchase-photo-title">
+                  {purchase.type === 'video' ? '🎬 ' : '📷 '}
+                  {purchase.title}
+                </h3>
+                <span style={{
                   color: getStatusColor(purchase.status),
                   fontWeight: 'bold',
                   fontSize: '0.9rem'
@@ -113,27 +139,31 @@ function MyPurchases() {
                   {purchase.status}
                 </span>
               </div>
-              
+
+              <div className="purchase-info">
+                <strong>Type:</strong> {purchase.type === 'video' ? 'Video' : 'Photo'}
+              </div>
+
               <div className="purchase-info">
                 <strong>Amount:</strong> ${purchase.amountPaid}
               </div>
-              
+
               <div className="purchase-info">
                 <strong>Purchase Date:</strong> {formatDate(purchase.purchaseDate)}
               </div>
-              
+
               <div className="purchase-info">
                 <strong>Transaction ID:</strong> {purchase.transactionId}
               </div>
-              
+
               {purchase.tokenExpiry && (
                 <div className="purchase-info">
                   <strong>Download Expires:</strong> {formatDate(purchase.tokenExpiry)}
                 </div>
               )}
-              
+
               {purchase.canDownload && (
-                <button 
+                <button
                   onClick={() => handleDownload(purchase)}
                   className="purchase-download-btn"
                 >
@@ -141,7 +171,7 @@ function MyPurchases() {
                   Download
                 </button>
               )}
-              
+
               {purchase.isExpired && (
                 <div style={{ color: '#e74c3c', fontWeight: 'bold' }}>
                   Download link has expired
@@ -159,4 +189,4 @@ function MyPurchases() {
   );
 }
 
-export default MyPurchases; 
+export default MyPurchases;

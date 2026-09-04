@@ -1,8 +1,10 @@
 package com.example.artgallery.controller;
 
 import com.example.artgallery.dto.StripePaymentRequestDTO;
+import com.example.artgallery.dto.VideoStripePaymentRequestDTO;
 import com.example.artgallery.service.PaymentService;
 import com.example.artgallery.service.PhotoPurchaseService;
+import com.example.artgallery.service.VideoPurchaseService;
 import com.example.artgallery.service.OrderRequestService;
 import com.example.artgallery.dto.OrderRequestDTO;
 import com.stripe.exception.StripeException;
@@ -29,6 +31,9 @@ public class StripePaymentController {
     
     @Autowired
     private PhotoPurchaseService photoPurchaseService;
+
+    @Autowired
+    private VideoPurchaseService videoPurchaseService;
     
     @Autowired
     private OrderRequestService orderRequestService;
@@ -111,6 +116,69 @@ public class StripePaymentController {
         }
     }
     
+    /**
+     * Create PaymentIntent for video purchase
+     */
+    @PostMapping("/create-video-payment-intent")
+    public ResponseEntity<Map<String, Object>> createVideoPaymentIntent(@RequestBody Map<String, Object> request) {
+        try {
+            Double amount = Double.parseDouble(request.get("amount").toString());
+            String currency = (String) request.getOrDefault("currency", "usd");
+            String description = (String) request.getOrDefault("description", "Video purchase");
+
+            Long amountInCents = paymentService.convertToCents(BigDecimal.valueOf(amount));
+            PaymentIntent paymentIntent = paymentService.createPaymentIntent(amountInCents, currency, description);
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("clientSecret", paymentIntent.getClientSecret());
+            response.put("paymentIntentId", paymentIntent.getId());
+            return ResponseEntity.ok(response);
+        } catch (StripeException e) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        } catch (Exception e) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("error", "Invalid request data");
+            return ResponseEntity.badRequest().body(error);
+        }
+    }
+
+    /**
+     * Confirm video payment and create VideoPurchase
+     */
+    @PostMapping("/confirm-video-payment")
+    public ResponseEntity<Map<String, Object>> confirmVideoPayment(@Valid @RequestBody VideoStripePaymentRequestDTO request) {
+        try {
+            boolean paymentConfirmed = paymentService.confirmPayment(request.getPaymentIntentId());
+
+            if (!paymentConfirmed) {
+                Map<String, Object> error = new HashMap<>();
+                error.put("error", "Payment not confirmed");
+                return ResponseEntity.badRequest().body(error);
+            }
+
+            var purchaseRequest = new com.example.artgallery.dto.VideoPurchaseRequestDTO();
+            purchaseRequest.setVideoId(request.getVideoId());
+            purchaseRequest.setCustomerEmail(request.getCustomerEmail());
+            purchaseRequest.setPaymentMethod("stripe");
+            purchaseRequest.setCurrency(request.getCurrency());
+
+            var purchase = videoPurchaseService.createPurchase(purchaseRequest);
+            purchase = videoPurchaseService.confirmPayment(purchase.getTransactionId());
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("purchase", purchase);
+            response.put("message", "Payment confirmed and video purchase created successfully");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        }
+    }
+
     /**
      * Create PaymentIntent for cart order
      */
